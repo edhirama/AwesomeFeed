@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		68D5EFE4252BE800009774CA /* RemoteFeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D5EFE3252BE800009774CA /* RemoteFeedLoader.swift */; };
 		68EC00B8252AAAC600B223A3 /* AwesomeFeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68EC00AE252AAAC500B223A3 /* AwesomeFeed.framework */; };
 		68EC00BD252AAAC600B223A3 /* AwesomeFeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EC00BC252AAAC600B223A3 /* AwesomeFeedTests.swift */; };
 		68EC00BF252AAAC600B223A3 /* AwesomeFeed.h in Headers */ = {isa = PBXBuildFile; fileRef = 68EC00B1252AAAC600B223A3 /* AwesomeFeed.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -26,6 +27,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		68D5EFE3252BE800009774CA /* RemoteFeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedLoader.swift; sourceTree = "<group>"; };
 		68EC00AE252AAAC500B223A3 /* AwesomeFeed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AwesomeFeed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		68EC00B1252AAAC600B223A3 /* AwesomeFeed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AwesomeFeed.h; sourceTree = "<group>"; };
 		68EC00B2252AAAC600B223A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -56,6 +58,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		68D5EFE2252BE7E8009774CA /* Feed API */ = {
+			isa = PBXGroup;
+			children = (
+				68D5EFE3252BE800009774CA /* RemoteFeedLoader.swift */,
+			);
+			path = "Feed API";
+			sourceTree = "<group>";
+		};
 		68EC00A4252AAAC500B223A3 = {
 			isa = PBXGroup;
 			children = (
@@ -77,6 +87,7 @@
 		68EC00B0252AAAC500B223A3 /* AwesomeFeed */ = {
 			isa = PBXGroup;
 			children = (
+				68D5EFE2252BE7E8009774CA /* Feed API */,
 				68EC00D2252AABC400B223A3 /* Feed Feature */,
 				68EC00B1252AAAC600B223A3 /* AwesomeFeed.h */,
 				68EC00B2252AAAC600B223A3 /* Info.plist */,
@@ -213,6 +224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68EC00CF252AAAFA00B223A3 /* FeedLoader.swift in Sources */,
+				68D5EFE4252BE800009774CA /* RemoteFeedLoader.swift in Sources */,
 				68EC00CB252AAADA00B223A3 /* FeedItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
