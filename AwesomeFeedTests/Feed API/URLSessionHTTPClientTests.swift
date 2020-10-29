@@ -54,35 +54,13 @@ class URLSessionHTTPClientTests: XCTestCase {
     }
 
     func test_getFromURL_failsOnRequestError() {
-        let error = NSError(domain: "any", code: -1)
-        URLProtocolStub.stub(data: nil, response: nil, error: error)
-        let exp = expectation(description: "Wait for completion")
-        makeSUT().get(from: anyURL()) { result in
-            switch result {
-            case let .failure(receivedError as NSError):
-                XCTAssertEqual(receivedError, error)
-            default: break
-            }
-            exp.fulfill()
-        }
-
-        wait(for: [exp], timeout: 1.0)
+        let requestError = NSError(domain: "any", code: -1)
+        let receivedError = requestErrorFor(data: nil, response: nil, error: requestError)
+       XCTAssertEqual(receivedError as NSError?, requestError)
     }
 
     func test_getFromURL_failsOnAllNilValues() {
-        URLProtocolStub.stub(data: nil, response: nil, error: nil)
-        let exp = expectation(description: "Wait for completion")
-        makeSUT().get(from: anyURL()) { result in
-            switch result {
-            case .failure:
-                break
-            case .success:
-                XCTFail("Shouldn't complete with success")
-            }
-            exp.fulfill()
-        }
-
-        wait(for: [exp], timeout: 1.0)
+        XCTAssertNotNil(requestErrorFor(data: nil, response: nil, error: nil))
     }
 
     // MARK: - Helpers
@@ -93,6 +71,22 @@ class URLSessionHTTPClientTests: XCTestCase {
         return sut
     }
 
+    private func requestErrorFor(data: Data?, response: URLResponse?, error: Error?) -> Error? {
+        URLProtocolStub.stub(data: data, response: response, error: error)
+        let exp = expectation(description: "Wait for completion")
+        var capturedError: Error?
+        makeSUT().get(from: anyURL()) { result in
+            switch result {
+            case let .failure(receivedError as NSError):
+                capturedError = receivedError
+            default: break
+            }
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 1.0)
+        return capturedError
+    }
     private func anyURL() -> URL {
         URL(string: "http://any-url.com")!
     }
