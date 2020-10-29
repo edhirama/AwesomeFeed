@@ -70,7 +70,9 @@ class URLSessionHTTPClientTests: XCTestCase {
     // MARK: - Helpers
 
     private func makeSUT() -> URLSessionHTTPClient {
-        URLSessionHTTPClient()
+        let sut = URLSessionHTTPClient()
+        trackForMemoryLeaks(sut)
+        return sut
     }
 
     private class URLProtocolStub: URLProtocol {
