@@ -76,41 +76,21 @@ class URLSessionHTTPClientTests: XCTestCase {
     func test_getFromURL_succeedsOnHTTPURLResponseWithData() {
         let response = anyHTTPURLResponse()
         let data = anyData()
-        URLProtocolStub.stub(data: data, response: response, error: nil)
-        let exp = expectation(description: "wait for request completion")
-        makeSUT().get(from: anyURL()) { result in
-            switch result {
-            case let .success(receivedResponse, receivedData):
-                XCTAssertEqual(receivedData, data)
-                XCTAssertEqual(receivedResponse.url, response.url)
-                XCTAssertEqual(receivedResponse.statusCode, response.statusCode)
-            default:
-                XCTFail("Expected success got \(result) instead")
-            }
-            exp.fulfill()
-        }
+        let receivedValues = requestValuesFor(data: data, response: response, error: nil)
 
-        wait(for: [exp], timeout: 1.0)
+        XCTAssertEqual(receivedValues?.data, data)
+        XCTAssertEqual(receivedValues?.response.url, response.url)
+        XCTAssertEqual(receivedValues?.response.statusCode, response.statusCode)
+
     }
 
     func test_getFromURL_succeedsWithEmptyDataOnHTTPURLResponseWithNilData() {
         let response = anyHTTPURLResponse()
-        URLProtocolStub.stub(data: nil, response: response, error: nil)
-        let exp = expectation(description: "wait for request completion")
-        makeSUT().get(from: anyURL()) { result in
-            switch result {
-            case let .success(receivedResponse, receivedData):
-                let emptyData = Data()
-                XCTAssertEqual(receivedData, emptyData)
-                XCTAssertEqual(receivedResponse.url, response.url)
-                XCTAssertEqual(receivedResponse.statusCode, response.statusCode)
-            default:
-                XCTFail("Expected success got \(result) instead")
-            }
-            exp.fulfill()
-        }
-
-        wait(for: [exp], timeout: 1.0)
+        let receivedValues = requestValuesFor(data: nil, response: response, error: nil)
+        let emptyData = Data()
+        XCTAssertEqual(receivedValues?.data, emptyData)
+        XCTAssertEqual(receivedValues?.response.url, response.url)
+        XCTAssertEqual(receivedValues?.response.statusCode, response.statusCode)
     }
 
     // MARK: - Helpers
@@ -137,22 +117,38 @@ class URLSessionHTTPClientTests: XCTestCase {
         return URLResponse(url: anyURL(), mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
     }
 
+    private func requestValuesFor(data: Data?, response: URLResponse?, error: Error?) -> (data: Data, response: HTTPURLResponse)? {
+        let result = requestResultFor(data: data, response: response, error: error)
+        switch result {
+            case let .success(response, data):
+                return (data, response)
+            default: return nil
+        }
+    }
+
     private func requestErrorFor(data: Data?, response: URLResponse?, error: Error?) -> Error? {
+        let result = requestResultFor(data: data, response: response, error: error)
+        switch result {
+        case let .failure(receivedError as NSError):
+            return receivedError
+        default: return nil
+        }
+    }
+
+    private func requestResultFor(data: Data?, response: URLResponse?, error: Error?) -> HTTPResult {
         URLProtocolStub.stub(data: data, response: response, error: error)
         let exp = expectation(description: "Wait for completion")
-        var capturedError: Error?
+        var capturedResult: HTTPResult!
         makeSUT().get(from: anyURL()) { result in
-            switch result {
-            case let .failure(receivedError as NSError):
-                capturedError = receivedError
-            default: break
-            }
+            capturedResult = result
             exp.fulfill()
         }
 
         wait(for: [exp], timeout: 1.0)
-        return capturedError
+        return capturedResult
     }
+
+
     private func anyURL() -> URL {
         URL(string: "http://any-url.com")!
     }
