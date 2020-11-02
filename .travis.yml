@@ -1,0 +1,4 @@
+os: osx
+xcode: 12.1.0
+language: swift
+script: xcodebuild clean build test -project AwesomeFeed/AwesomeFeed.xcodeproj -scheme "CI" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
