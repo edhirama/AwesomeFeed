@@ -1,5 +1,5 @@
 
-name: CI-macOS
+name: CI
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -26,4 +26,4 @@ jobs:
       run: /usr/bin/xcodebuild -version
       
     - name: Build and Test
-      run: xcodebuild clean build test -project AwesomeFeed/AwesomeFeed.xcodeproj -scheme "CI_macOS" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk macosx -destination "platform=macOS" ONLY_ACTIVE_ARCH=YES
+      run: xcodebuild clean build test -project AwesomeFeed/AwesomeFeed.xcodeproj -scheme "CI" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk macosx -destination "platform=macOS" ONLY_ACTIVE_ARCH=YES
