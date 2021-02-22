@@ -44,17 +44,21 @@ class CacheFeedUseCaseTests: XCTestCase {
         XCTAssertEqual(store.deleteCacheFeedCallCount, 1)
     }
 
+    // MARK: - Helpers
+
+    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStore) {
+        let store = FeedStore()
+        let sut = LocalFeedLoader(store: store)
+        trackForMemoryLeaks(store, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return (sut, store)
+    }
+
     private func uniqueItem() -> FeedItem {
         return FeedItem(id: UUID(), description: "any", location: "any", imageURL: anyURL())
     }
 
     private func anyURL() -> URL {
         URL(string: "http://any-url.com")!
-    }
-
-    private func makeSUT() -> (sut: LocalFeedLoader, store: FeedStore) {
-        let store = FeedStore()
-        let sut = LocalFeedLoader(store: store)
-        return (sut, store)
     }
 }
