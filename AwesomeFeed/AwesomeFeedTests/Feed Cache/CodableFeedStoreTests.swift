@@ -106,20 +106,47 @@ class CodableFeedStoreTests: XCTestCase {
 
     func test_retrieveAfterInsertingToEmptyCacheReturnsInsertedValues() {
         let store = makeSUT()
-        let feed = uniqueImageFeed()
+        let feed = uniqueImageFeed().local
         let timestamp = Date()
         let exp = expectation(description: "Wait for retrieval")
-        store.insert(feed.local, timestamp: timestamp, completion: { error in
+        store.insert(feed, timestamp: timestamp, completion: { error in
             store.retrieve { result in
                 switch result {
                 case .found(let retrievedFeed, let retrievedTimestamp):
-                    XCTAssertEqual(feed.local, retrievedFeed)
+                    XCTAssertEqual(feed, retrievedFeed)
                     XCTAssertEqual(retrievedTimestamp, timestamp)
                     break
                 default: XCTFail("Expected found result, got \(result) instead")
                 }
                 exp.fulfill()
             }
+        })
+        wait(for: [exp], timeout: 1.0)
+    }
+
+    func test_retrieve_fromNonEmptyCacheTwice_shouldReturnSameResult() {
+        let store = makeSUT()
+        let feed = uniqueImageFeed().local
+        let timestamp = Date()
+        let exp = expectation(description: "Wait for retrieval")
+        store.insert(feed, timestamp: timestamp, completion: { error in
+            store.retrieve { firstResult in
+                store.retrieve { secondResult in
+                    switch (firstResult, secondResult) {
+                    case (.found(let firstFeed, let firstTimestamp), .found(let secondFeed, let secondTimestamp)):
+                        XCTAssertEqual(firstFeed, feed)
+                        XCTAssertEqual(firstTimestamp, timestamp)
+
+
+                        XCTAssertEqual(secondFeed, feed)
+                        XCTAssertEqual(secondTimestamp, timestamp)
+                        break
+                    default: XCTFail("Expected same result with \(feed) and \(timestamp), got \(firstResult)  and \(secondResult) instead")
+                    }
+                    exp.fulfill()
+                }
+            }
+
         })
         wait(for: [exp], timeout: 1.0)
     }
