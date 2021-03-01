@@ -127,6 +127,40 @@ class CodableFeedStoreTests: XCTestCase {
         expect(sut, toRetrieve: .empty)
     }
 
+    func test_operationsShouldRunSerially() {
+        let sut = makeSUT()
+
+        var operations = [XCTestExpectation]()
+
+        let op1 = expectation(description: "op1")
+        sut.retrieve { _ in
+            operations.append(op1)
+            op1.fulfill()
+        }
+
+        let op2 = expectation(description: "op2")
+        sut.insert(uniqueImageFeed().local, timestamp: Date()) { _ in
+            operations.append(op2)
+            op2.fulfill()
+        }
+
+        let op3 = expectation(description: "op3")
+        sut.retrieve { _ in
+            operations.append(op3)
+            op3.fulfill()
+        }
+
+        let op4 = expectation(description: "op4")
+        sut.deleteCachedFeed { _ in
+            operations.append(op4)
+            op4.fulfill()
+        }
+
+        waitForExpectations(timeout: 5.0)
+
+        XCTAssertEqual(operations, [op1, op2, op3, op4])
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(storeURL: URL? = nil, file: StaticString = #file, line: UInt = #line) -> FeedStore {
