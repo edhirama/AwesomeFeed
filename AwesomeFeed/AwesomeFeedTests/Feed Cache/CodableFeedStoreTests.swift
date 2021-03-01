@@ -8,7 +8,7 @@
 import XCTest
 import AwesomeFeed
 
-class CodableFeedStore {
+class CodableFeedStore: FeedStore {
 
     private struct CodableFeedImage: Codable {
         public let id: UUID
